@@ -10,9 +10,9 @@ open Base
   k
   = ( base_or_null
     , base_or_null & base_or_null
-    , (value_or_null & value_or_null) & base_or_null
+    , (value_or_null & base_or_null) & base_or_null
     , (_ : (_ : base_or_null & (value_or_null & value_or_null)))
-    , (_ : (_ : (value_or_null & value_or_null) & (value_or_null & value_or_null)))
+    , (_ : (_ : (value_or_null & base_or_null) & (value_or_null & value_or_null)))
     , bits64 & (bits64, value_or_null, float64, k_triple)
     , (value_or_null, float64, k_triple) & k_triple )]
 
@@ -33,6 +33,7 @@ val is_some : ('a : k). ('a t[@kind k]) -> bool [@@zero_alloc strict]]
 
 [%%template:
 [@@@kind.default k = base_or_null]
+[@@@mode.default c = (uncontended, shared, contended)]
 
-val box : ('a : k). ('a t[@kind k]) -> ('a Option.t[@kind k])
-val unbox : ('a : k). ('a Option.t[@kind k]) -> ('a t[@kind k])]
+val box : ('a : k). ('a t[@kind k]) @ c -> ('a Option.t[@kind k]) @ c
+val unbox : ('a : k). ('a Option.t[@kind k]) @ c -> ('a t[@kind k]) @ c]

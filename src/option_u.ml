@@ -26,8 +26,8 @@ include struct
     (k1s, k2s)
     = ( (base_or_null, base_or_null)
       , (base_or_null, value_or_null & value_or_null)
-      , (value_or_null & value_or_null, base_or_null)
-      , (value_or_null & value_or_null, value_or_null & value_or_null) )]
+      , (value_or_null & base_or_null, base_or_null)
+      , (value_or_null & base_or_null, value_or_null & value_or_null) )]
 
   [@@@kind k1 = k1s, k2 = k2s]
 
@@ -43,9 +43,11 @@ end
 include struct
   [@@@kind kl = (k_triple, bits64, value_or_null, float64)]
 
-  type none : k =
-    #((none[@kind bits64]) * (none[@kind bits64]) * (none[@kind value_or_null]))
-  [@@kind k = k_triple]
+  open struct
+    type none : k =
+      #((none[@kind bits64]) * (none[@kind bits64]) * (none[@kind value_or_null]))
+    [@@kind k = k_triple]
+  end
 
   type none : k = #((none[@kind kl]) * (none[@kind k_triple]))
   [@@kind k = (kl & k_triple)]
@@ -66,9 +68,9 @@ include struct
     k
     = ( base_or_null
       , base_or_null & base_or_null
-      , (value_or_null & value_or_null) & base_or_null
+      , (value_or_null & base_or_null) & base_or_null
       , (_ : (_ : base_or_null & (value_or_null & value_or_null)))
-      , (_ : (_ : (value_or_null & value_or_null) & (value_or_null & value_or_null)))
+      , (_ : (_ : (value_or_null & base_or_null) & (value_or_null & value_or_null)))
       , bits64 & (bits64, value_or_null, float64, k_triple)
       , (value_or_null, float64, k_triple) & k_triple )]
 
@@ -155,6 +157,7 @@ end
 
 include struct
   [@@@kind.default k = base_or_null]
+  [@@@mode.default c = (uncontended, shared, contended)]
 
   let box (type a : k) (t : (a t[@kind k])) : (a Option.t[@kind k]) =
     match t with
@@ -165,6 +168,6 @@ include struct
   let unbox (type a : k) (t : (a Option.t[@kind k])) : (a t[@kind k]) =
     match t with
     | None -> (none [@kind k]) ()
-    | Some x -> (some [@kind k]) x
+    | Some x -> T #(Some, x)
   ;;
 end]

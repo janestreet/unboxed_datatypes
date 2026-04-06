@@ -310,12 +310,12 @@ end
 
 module Local = struct
   module Let_syntax = struct
-    let return = [%eta1.exclave return [@mode local]]
+    let return = [%eta1 exclave_ return [@mode local]]
     let[@inline] ( >>= ) a f = exclave_ (bind [@mode local]) a ~f
     let[@inline] ( >>| ) a f = exclave_ (map [@mode local]) a ~f
 
     module Let_syntax = struct
-      let return = [%eta1.exclave return [@mode local]]
+      let return = [%eta1 exclave_ return [@mode local]]
       let bind = (bind [@mode local])
       let map = (map [@mode local])
 
