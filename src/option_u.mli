@@ -9,12 +9,16 @@ open Base
 [@@@kind.default
   k
   = ( base_or_null
+    , bits8
+    , bits16
+    , void
     , base_or_null & base_or_null
     , (value_or_null & base_or_null) & base_or_null
     , (_ : (_ : base_or_null & (value_or_null & value_or_null)))
     , (_ : (_ : (value_or_null & base_or_null) & (value_or_null & value_or_null)))
-    , bits64 & (bits64, value_or_null, float64, k_triple)
-    , (value_or_null, float64, k_triple) & k_triple )]
+    , (_ : (_ : bits64 & (bits64 & word)))
+    , (value_or_null, float64, bits64, k_triple) & k_triple
+    , (_ : (_ : (value_or_null & bits64) & ((value_or_null & bits64) & word))) )]
 
 type none : k
 
@@ -28,8 +32,8 @@ type ('a : k) t : immediate & k =
 
 val some : ('a : k). 'a -> ('a t[@kind k]) [@@zero_alloc strict]
 val none : ('a : k). unit -> ('a t[@kind k]) [@@zero_alloc strict]
-val is_none : ('a : k). ('a t[@kind k]) -> bool [@@zero_alloc strict]
-val is_some : ('a : k). ('a t[@kind k]) -> bool [@@zero_alloc strict]]
+val is_none : ('a : k). ('a t[@kind k]) @ immutable local -> bool [@@zero_alloc strict]
+val is_some : ('a : k). ('a t[@kind k]) @ immutable local -> bool [@@zero_alloc strict]]
 
 [%%template:
 [@@@kind.default k = base_or_null]
