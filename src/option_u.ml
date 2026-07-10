@@ -97,8 +97,11 @@ include struct
     | T : ('a : k) ('b : k). #((('a, 'b) tag[@kind k]) * 'b) -> ('a t[@kind k])
   [@@unboxed]
 
-  let some x = T #(Some, x)
-  let none () = T #(None, (none [@kind k]) ())
+  let%template some (x @ m) = T #(Some, x) [@exclave_if_local m]
+  [@@kind k] [@@mode m = (global, local)]
+  ;;
+
+  let%template none () = T #(None, (none [@kind k]) ()) [@@kind k]
 
   let is_some (type a : k) t =
     match (t : (a t[@kind k])) with

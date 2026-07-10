@@ -30,7 +30,9 @@ type ('a : k) t : immediate & k =
   | T : ('a : k) ('b : k). #((('a, 'b) tag[@kind k]) * 'b) -> ('a t[@kind k])
 [@@unboxed] [@@deriving globalize, sexp ~stackify]
 
-val some : ('a : k). 'a -> ('a t[@kind k]) [@@zero_alloc strict]
+val some : ('a : k). 'a @ m -> ('a t[@kind k]) @ m
+[@@mode m = (global, local)] [@@zero_alloc strict]
+
 val none : ('a : k). unit -> ('a t[@kind k]) [@@zero_alloc strict]
 val is_none : ('a : k). ('a t[@kind k]) @ immutable local -> bool [@@zero_alloc strict]
 val is_some : ('a : k). ('a t[@kind k]) @ immutable local -> bool [@@zero_alloc strict]]
